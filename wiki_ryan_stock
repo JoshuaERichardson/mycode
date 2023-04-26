@@ -1,0 +1,14 @@
+#/!usr/bin/env python3
+
+ryan_stock = {
+                "tv shows" : ["Guinea Pig", "Jim Rose Twisted Tour", "Jim Rose Circus", "Tonight Show", "Guiness World Records Gone Wild", 
+                              "America's Got Talent", "Lo Show dei Record"],
+                "world records" : ["Heaviest vehicle pulled using a hook through the nasal cavity and out of the mouth", 
+                                   "Most drink can tops torn off with the teeth", "Most blowtorches extinguished on the tongue in one minute", 
+                                   "The heaviest weight lifted by hooks in the forearms"],
+                "newest achievement" : { "feat" : "56 cm insertion of glow stick in the nostril", "author" : "Leakyshoes aka Joshua Richardson" },
+                "is_alive" : True
+}
+
+
+print(ryan_stock)

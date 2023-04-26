@@ -3,14 +3,14 @@
 def main():
     wordbank= ["indentation", "spaces"]
 
-    tlgstudents= ['Albert', 'Anthony', 'Brenden', 'Craig', 'Deja', 'Elihu', 'Eric', 'Giovanni', 'James', 'Joshua', 'Maria', 'Mohamed', 'PJ', 'Philip', 'Sagan', 'Suchit', 'Meka', 'Trey', 'Winton', 'Xiuxiang', 'Yaping']
+   tlgstudents= ["Brandon", "Caleb", "Cat", "Chad the Beardulous", "Chance", "Chris", "Jessica", "Jorge", "Joshua", "Justin", "Lui", "Stephen"]
     
     wordbank.append(4)
 
     print(wordbank)
 
     while(True):
-        num = input("gimme # b/t 0 and 20 plz:\n")
+        num = input("gimme # b/t 0 and 11 plz:\n")
         try:
             num = int(num)
             if 0 <= num <= 20: break
@@ -18,8 +18,12 @@ def main():
             continue
 
     print(tlgstudents)    
-    tlgstudents.pop(num)
+    student_name = tlgstudents.pop(num)
     print(tlgstudents)
+
+
+    print(f"{student_name.title()} always uses <4> <spaces> to indent.")
+
 
 
 main()
