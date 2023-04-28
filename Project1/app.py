@@ -5,8 +5,6 @@ from flask import request
 app = Flask(__name__)
 
 def calculate_results(results):
-
-    
     # Grab each variable:
     age = int(results.get('age', 0))
     num_occupants = int(results.get('num_occupants', 0))
@@ -31,6 +29,18 @@ def calculate_results(results):
 
     return score
 
+def determine_haunt(score):
+    if score == "You need a basement to play this game!":
+        return score
+    if score < 10:
+        return "Not Haunted"
+    elif score < 20:
+        return "Possibly Haunted"
+    elif score < 30:
+        return "Probably Haunted"
+    else:
+        return "Definitely Haunted"
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -42,6 +52,7 @@ def index():
         print(results)
         # Calculate the results
         haunt_score = calculate_results(results)
+        haunt_score = determine_haunt(haunt_score)
         return render_template('index.html', haunt_score=haunt_score)
 
 

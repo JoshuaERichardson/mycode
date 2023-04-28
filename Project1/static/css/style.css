@@ -1,0 +1,328 @@
+.container {
+    position: relative;
+    font-family: sans-serif;
+  }
+  
+  .container::before, .container::after {
+    content: "";
+    background-color: #a1a8ea4c;
+    position: absolute;
+  }
+  
+  .container::before {
+    border-radius: 50%;
+    width: 15rem;
+    height: 15rem;
+    top: 30%;
+    right: 30%;
+  }
+  
+  /* .container::after {
+    content: "";
+    position: absolute;
+    height: 100rem;
+    top: 8%;
+    right: 5%;
+    border: 1px solid;
+  } */
+  
+  .container .box {
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.074);
+    border: 1px solid rgba(255, 255, 255, 0.222);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: .7rem;
+    transition: all ease .3s;
+  }
+
+  .box{
+    max-width: 50vw;
+  }
+  
+  .container .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .container .box .title {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: .1em
+  }
+  
+  .container .box div strong {
+    display: block;
+    margin-bottom: .5rem;
+  }
+  
+  .container .box div p {
+    margin: 0;
+    font-size: .9em;
+    font-weight: 300;
+    letter-spacing: .1em;
+  }
+  
+  .container .box div span {
+    font-size: .7rem;
+    font-weight: 300;
+  }
+  
+  .container .box div span:nth-child(3) {
+    font-weight: 500;
+    margin-right: .2rem;
+  }
+  
+  .container .box:hover {
+    box-shadow: 0px 0px 20px 1px #ffbb763f;
+    border: 1px solid rgba(255, 255, 255, 0.454);
+  }
+
+/* Applied to all */
+body {
+    background-color: rgba(32, 43, 43, 0.749);
+    color: #eeeeeec7;   
+}
+.master-container{
+    height: 100vh;
+}
+
+
+
+/* Modal!!!! */
+@font-face {
+    font-family: 'Princess';
+    src: url('://s3-us-west-2https.amazonaws.com/s.cdpn.io/217233/PrincesSANDTHEFROG.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.modal_inner, .modal_inner__front, .modal_inner__front video, .modal_inner__shadow, .modal_inner__back, .modal_inner__back img.a, .modal_inner__back .text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin: auto;
+    transform: translateY(-50%);
+}
+body {
+    overflow: hidden;
+}
+.modal {
+    display: none;
+    height: 100vh;
+    font-family: 'Princess';
+    mix-blend-mode: multiply;
+}
+.modal_inner {
+    height: 100vh;
+}
+.modal_inner__front {
+    /* width: 940px; */
+}
+/* .modal_inner__front video { */
+    /* box-shadow: 0 0 0 150px white; */
+    /* width: 870px; */
+/* } */
+.modal_inner__shadow {
+    width: 540px;
+    height: 420px;
+    top: calc(50% - 42px);
+    background: radial-gradient(ellipse at center, rgba(23, 8, 0, 0.54) 30%, #000 100%);
+}
+.modal_inner__back {
+    width: 940px;
+}
+.modal_inner__back .cog_one {
+    width: 160px;
+    height: 160px;
+    filter: blur(1px);
+    left: 172px;
+    top: -130px;
+    position: absolute;
+}
+.modal_inner__back .cog_one img {
+    width: 100%;
+    -webkit-animation: spin 26s linear infinite;
+    animation: spin 36s linear infinite;
+}
+.modal_inner__back .cog_two {
+    width: 140px;
+    height: 140px;
+    left: 300px;
+    filter: blur(0px);
+    top: -150px;
+    position: absolute;
+}
+.modal_inner__back .cog_two img {
+    width: 100%;
+    -webkit-animation: spin 8s linear infinite;
+    animation: spin 18s linear infinite;
+}
+.modal_inner__back .cog_three {
+    width: 120px;
+    height: 120px;
+    left: 423px;
+    top: -213px;
+    filter: blur(0);
+    position: absolute;
+    position: absolute;
+}
+.modal_inner__back .cog_three img {
+    width: 100%;
+    -webkit-animation: spin 8s linear infinite;
+    animation: spinBack 18s linear infinite;
+}
+.modal_inner__back .cog_four {
+    width: 120px;
+    height: 120px;
+    left: 380px;
+    top: -45px;
+    position: absolute;
+}
+.modal_inner__back .cog_four img {
+    width: 100%;
+    -webkit-animation: spin 38s linear infinite;
+    animation: spinBack 38s linear infinite;
+}
+.modal_inner__back .cog_five {
+    width: 27px;
+    height: 120px;
+    left: 423px;
+    transform-origin: 50px 0px;
+    top: -153px;
+    position: absolute;
+}
+.modal_inner__back .cog_five img {
+    width: 100%;
+    transform-origin: 50% 100%;
+    -webkit-animation: spin 20s linear infinite;
+    animation: spinBack 20s linear infinite;
+}
+.modal_inner__back .cog_six {
+    width: 27px;
+    height: 120px;
+    left: 423px;
+    transform-origin: 50px 0px;
+    top: -153px;
+    position: absolute;
+}
+.modal_inner__back .cog_six img {
+    transform-origin: 50% 100%;
+    width: 100%;
+    -webkit-animation: spin 3s linear infinite;
+    animation: spinBack 3s linear infinite;
+}
+.modal_inner__back .cog_seven {
+    width: 190px;
+    height: 200px;
+    left: 463px;
+    -webkit-transform-origin: 50px 0px;
+    transform-origin: 50px 0px;
+    top: 97px;
+    position: absolute;
+    filter: blur(2px);
+}
+.modal_inner__back .cog_seven img {
+    width: 100%;
+    -webkit-animation: spin 53s linear infinite;
+    animation: spinBack 53s linear infinite;
+}
+.modal_inner__back .cog_eight {
+    width: 70px;
+    height: 70px;
+    left: 452px;
+    top: 17px;
+    filter: blur(1px);
+    position: absolute;
+}
+.modal_inner__back .cog_eight img {
+    width: 100%;
+    -webkit-animation: spin 33s linear infinite;
+    animation: spinBack 33s linear infinite;
+}
+.modal_inner__back img.a {
+    width: 830px;
+    top: calc(50% - 50px);
+}
+.modal_inner__back .text {
+    color: white;
+    text-align: center;
+    width: 240px;
+    left: -58px;
+    top: calc(50% - 32px);
+}
+.modal_inner__back .text h1 {
+    font-weight: 400;
+    font-size: 13px;
+    transform: translateZ(20px);
+    opacity: 0;
+    transition: all 0.8s 0.2s;
+}
+.modal_inner__back .text p {
+    opacity: 0.9;
+    font-weight: 300;
+    opacity: 0;
+    font-size: 8px;
+    line-height: 15px;
+    transition: all 0.8s 0.3s;
+}
+.modal_inner__back .text img {
+    opacity: 0;
+    transform: translateZ(-20px);
+    transition: all 0.8s 0.4s;
+}
+.modal_inner__back .text a {
+    color: white;
+    opacity: 0;
+    font-size: 12px;
+    border-bottom: 1px solid white;
+    transition: all 0.8s 0.5s;
+    transform: translateZ(30px);
+}
+.modal_button {
+    font-family: 'Princess';
+    position: absolute;
+    z-index: 3;
+    color: #483737;
+    display: block;
+    width: 132px;
+    border: 1px solid #bdbdbd;
+    text-align: center;
+    border-radius: 2px;
+    top: 50%;
+    padding: 13px;
+    right: 0;
+    margin: auto;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-size: 12px;
+    left: -90px;
+    cursor: pointer;
+    -webkit-transition: background 0.7s;
+    transition: background 0.7s;
+    background: rgba(61, 21, 24, 0.78);
+    color: white;
+    border: none;
+}
+.modal_button:hover {
+    background: #3d1518;
+    color: white;
+    border: none;
+}
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+   }
+    to {
+        transform: rotate(360deg);
+   }
+}
+@keyframes spinBack {
+    from {
+        transform: rotate(0deg);
+   }
+    to {
+        transform: rotate(- 360deg);
+   }
+}
