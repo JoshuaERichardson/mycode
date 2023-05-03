@@ -33,6 +33,8 @@ def main():
     for i in people:
         print(f'{i["name"]} on the {i["craft"]}')
 
+   
+
 if __name__ == "__main__":
     main()
 
