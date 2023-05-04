@@ -1,0 +1,38 @@
+<!-- Index page: 
+
+    If user is not logged in, display login form
+    If user is logged in, display logout button and user's name
+
+    If user is logged in, display a list of all the user's tasks
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    {% block title %}Task List{% endblock %} 
+    {% block content %}
+        {% if data %}
+        <p>You are logged in as {{ data }}. <a href="/logout">Log out</a></p>
+        {% else %}
+        <p>You are not logged in. <a href="/login">Log in</a></p>
+        {% endif %}
+        
+        <h2>Task List</h2>
+        <ul>
+        {% for task in tasks %}
+        <li>TODO</li>
+        {% endfor %}
+        </ul>
+    
+    {% endblock %}
+</body>
+</html>
+
+
