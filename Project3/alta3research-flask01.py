@@ -1,11 +1,12 @@
 """
+
 Goal:
 At least two endpoints  (check)
-At least one of your endpoints should return JSON TODO
+At least one of your endpoints should return JSON (check)
 Has One additional Feature:
     - One endpoint returns HTML that uses jinja2 logic (check)
     - requires a session value be present in order to get a response (check)
-    - writes to/reads from a cookie TODO
+    - writes to/reads from a cookie TODO --- skipping
     - reads from/writes to a sqlite3 database (check)
 
 author: joshuaerichardson
@@ -15,8 +16,15 @@ My implementation:
 Task list :
     - user name stored in session
     - user tasks stored in cookie
-    - list of all users stored in sqlite3 database
+    - list of all users and tasks stored in sqlite3 database
     - one user can have many tasks
+
+    
+TODO: Update and Delete tasks
+TODO: Modularize our DB into a crud file in models folder
+TODO: Push users tasks to cookies for "speed"
+
+
 """
 ############# Imports #####################
 
@@ -24,17 +32,15 @@ Task list :
 from flask_bcrypt import Bcrypt
 import sqlite3
 from flask import (
-    Flask,
-    render_template,
-    request,
-    session,
-    redirect,
-    url_for,
-    escape,
-    jsonify,
+    Flask, 
+    render_template, 
+    request, 
+    session, 
+    redirect, 
+    url_for, 
     g
 )
-import sqlite3
+import json
 
 
 # create an instance of our Flask app
@@ -42,24 +48,28 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 # set up session secret key
-app.secret_key = 'super secret key'
-session = {}
+app.secret_key = "super secret key"
 
 
 ############# Database #####################
 
 # Database setup:
 DATABASE = "./models/users.db"
+
+
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()
+
 
 def init_db():
     with app.app_context():
@@ -76,29 +86,50 @@ def new_user(username, password):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        print('NEW USER FUNCTION')
-        cur.execute("INSERT INTO users (username, hash_password) VALUES (?, ?)", (username, password))
+        print("NEW USER FUNCTION")
+        cur.execute(
+            "INSERT INTO users (username, hash_password) VALUES (?, ?)",
+            (username, password),
+        )
         connection.commit()
 
-def insert_task(username, task):
+
+def insert_task(user_id, task):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("INSERT INTO tasks (username, task) VALUES (?, ?)", (username, task))
+        cur.execute("INSERT INTO tasks (user_id, task) VALUES (?, ?)", (user_id, task))
         connection.commit()
+
+
+def get_every_tasks():
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        cur.execute("SELECT * FROM tasks")
+        return cur.fetchall()
+
 
 def get_all_tasks(username):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("SELECT task FROM tasks WHERE username=?", (username,))
+        cur.execute("SELECT task FROM tasks WHERE username=?", (username))
         return cur.fetchall()
+
 
 def get_user(username):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("SELECT * FROM users WHERE username=?", (username,))
+        cur.execute("SELECT * FROM users WHERE username=?", (username))
+        return cur.fetchall()
+    
+def get_user_name(user_id):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        cur.execute("SELECT username FROM users WHERE id=?", (user_id))
         return cur.fetchall()
 
 def check_password(username, passed_password):
@@ -110,9 +141,8 @@ def check_password(username, passed_password):
         return is_password
 
 
-
-
 ############# Routes #####################
+
 
 ## create a route for our index page
 @app.route("/")
@@ -139,6 +169,7 @@ def login():
         # if the username and password match, log the user in
         if is_user:
             session["username"] = request.form["username"]
+            session["user_id"] = get_user(username)[0][0]
             return redirect(url_for("index"))
         # if the username and password don't match, send the user back to the login page
         else:
@@ -159,8 +190,32 @@ def newuser():
     new_user(username, pw_hash)
     # Save the username to the session
     session["username"] = username
+    session["user_id"] = get_user(username)[0][0]
     # Redirect the user to the index page:
     return redirect(url_for("index"))
+
+
+## create a route for all_tasks:
+@app.route("/all_tasks")
+def all_tasks():
+    print("ALL TASKS FUNCTION")
+
+    # Grab all the tasks from the database
+    tasks = get_every_tasks()
+
+    # Join the tasks with the userame:
+    task_list=[]
+    for task in tasks:
+        task_list.append(
+            {
+                "username": get_user_name(task[1])[0][0],
+                "task": task[2]
+            }
+        )
+    
+    # Make task_list into json:
+    task_list = json.dumps(task_list)
+    return task_list
 
 
 ## create a route for our logout page
@@ -168,6 +223,29 @@ def newuser():
 def logout():
     # remove the username from the session if it's there
     session.pop("username", None)
+    session.pop("user_id", None)
+    return redirect(url_for("index"))
+
+
+## create a route for a new task:
+@app.route("/new_task", methods=["POST"])
+def new_task():
+    # Save the task from the form
+    task = request.form["task"]
+    # Save the username from the session
+    user_id = session["user_id"]
+    # Save the task to the database
+    insert_task(user_id, task)
+    # Save the task to the cookies:
+    ### DISREGARD tasks = request.cookies.get("tasks")
+    if tasks:
+        tasks = tasks.split(",")
+        tasks.append(task)
+        tasks = ",".join(tasks)
+    else:
+        tasks = task
+
+    # Redirect the user to the index page:
     return redirect(url_for("index"))
 
 

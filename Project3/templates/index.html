@@ -19,19 +19,29 @@
     {% block title %}Task List{% endblock %} 
     {% block content %}
         {% if data %}
-        <p>You are logged in as {{ data }}. <a href="/logout">Log out</a></p>
+            <p>You are logged in as {{ data }}. <a href="/logout">Log out</a></p>
         {% else %}
-        <p>You are not logged in. <a href="/login">Log in</a></p>
+            <p>You are not logged in. <a href="/login">Log in</a></p>
         {% endif %}
         
         <h2>Task List</h2>
         <ul>
         {% for task in tasks %}
-        <li>TODO</li>
+            <li>TODO</li>
         {% endfor %}
         </ul>
     
     {% endblock %}
+
+    {% if data %}
+        {% block task_list %}
+        <h2>New Task</h2>
+        <form action="/new_task" method="POST">
+            <label for="task">Task:</label>
+            <input type="text" id="task" name="task" required /><br /><br />
+            <input type="submit" value="Create New Task" />
+        {% endblock %}
+    {% endif %}
 </body>
 </html>
 

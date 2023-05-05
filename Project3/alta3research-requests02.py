@@ -1,4 +1,4 @@
-'''
+"""
 
 Goal:
 Send a GET request to your flask API; it should target the endpoint that returns JSON
@@ -7,16 +7,21 @@ Take the returned JSON and 'normalize' it into a format that is easy for users t
 author: joshuaerichardson
 date: 2023-05-04
 
-'''
-from flask import Flask, request, jsonify
-from pprint import pprint
+"""
+import json
+import requests
 
-URL = "http://127.0.0.1:2224"
+URL = "http://127.0.0.1:5000/all_tasks"
 
-def main():
-    r = request.get(URL + "/api/v1/users")
-    pprint(r.json())
+response = requests.get(URL)
+print(response)
 
-if __name__ == "__main__":
-    main()
+# Change from json to python dictionary
+response = response.json()
 
+print('The following is a list of all tasks for all users:')
+for task in response:
+    print(f'''
+    User: {task['username']}
+    Tasks: {task['task']})
+    ''')
