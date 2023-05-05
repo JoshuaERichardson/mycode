@@ -26,9 +26,9 @@
         
         <h2>Task List</h2>
         <ul>
-        {% for task in tasks %}
-            <li>TODO</li>
-        {% endfor %}
+            {% for task in tasks %}
+                <li>{{task[0]}}</li>
+            {% endfor %}
         </ul>
     
     {% endblock %}

@@ -29,17 +29,10 @@ TODO: Push users tasks to cookies for "speed"
 ############# Imports #####################
 
 # import our required libraries
+
 from flask_bcrypt import Bcrypt
 import sqlite3
-from flask import (
-    Flask, 
-    render_template, 
-    request, 
-    session, 
-    redirect, 
-    url_for, 
-    g
-)
+from flask import Flask, render_template, request, session, redirect, url_for, g
 import json
 
 
@@ -77,6 +70,8 @@ def init_db():
         with app.open_resource("./models/schema.sql", mode="r") as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+
 # init_db()   <----- run if the db has not been initialized yet
 
 # Database CRUD:
@@ -110,11 +105,11 @@ def get_every_tasks():
         return cur.fetchall()
 
 
-def get_all_tasks(username):
+def get_all_tasks(user_id):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("SELECT task FROM tasks WHERE username=?", (username))
+        cur.execute("SELECT task FROM tasks WHERE user_id=?", (user_id, ))
         return cur.fetchall()
 
 
@@ -122,15 +117,17 @@ def get_user(username):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("SELECT * FROM users WHERE username=?", (username))
+        cur.execute("SELECT * FROM users WHERE username=?", (username, ))
         return cur.fetchall()
-    
+
+
 def get_user_name(user_id):
     with app.app_context():
         connection = get_db()
         cur = connection.cursor()
-        cur.execute("SELECT username FROM users WHERE id=?", (user_id))
+        cur.execute("SELECT username FROM users WHERE id=?", (user_id, ))
         return cur.fetchall()
+
 
 def check_password(username, passed_password):
     with app.app_context():
@@ -148,7 +145,10 @@ def check_password(username, passed_password):
 @app.route("/")
 def index():
     if "username" in session:
-        return render_template("index.html", data=session["username"])
+        # Get all tasks for the user
+        user_id = session["user_id"]
+        tasks = get_all_tasks(user_id)
+        return render_template("index.html", data=session["username"], tasks=tasks)
     else:
         return render_template("index.html")
 
@@ -204,15 +204,10 @@ def all_tasks():
     tasks = get_every_tasks()
 
     # Join the tasks with the userame:
-    task_list=[]
+    task_list = []
     for task in tasks:
-        task_list.append(
-            {
-                "username": get_user_name(task[1])[0][0],
-                "task": task[2]
-            }
-        )
-    
+        task_list.append({"username": get_user_name(task[1])[0][0], "task": task[2]})
+
     # Make task_list into json:
     task_list = json.dumps(task_list)
     return task_list
@@ -251,4 +246,4 @@ def new_task():
 
 ## spin up flask
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=2224, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)
