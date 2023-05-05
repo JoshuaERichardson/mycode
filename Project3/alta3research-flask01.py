@@ -233,12 +233,7 @@ def new_task():
     insert_task(user_id, task)
     # Save the task to the cookies:
     ### DISREGARD tasks = request.cookies.get("tasks")
-    if tasks:
-        tasks = tasks.split(",")
-        tasks.append(task)
-        tasks = ",".join(tasks)
-    else:
-        tasks = task
+    
 
     # Redirect the user to the index page:
     return redirect(url_for("index"))
