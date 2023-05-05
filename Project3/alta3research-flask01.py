@@ -1,18 +1,28 @@
 """
 Goal:
-At least two endpoints
-At least one of your endpoints should return JSON
+At least two endpoints  (check)
+At least one of your endpoints should return JSON TODO
 Has One additional Feature:
-    - One endpoint returns HTML that uses jinja2 logic
-    - requires a session value be present in order to get a response
-    - writes to/reads from a cookie
-    - reads from/writes to a sqlite3 database
+    - One endpoint returns HTML that uses jinja2 logic (check)
+    - requires a session value be present in order to get a response (check)
+    - writes to/reads from a cookie TODO
+    - reads from/writes to a sqlite3 database (check)
 
 author: joshuaerichardson
 date: 2023-05-04
+
+My implementation:
+Task list :
+    - user name stored in session
+    - user tasks stored in cookie
+    - list of all users stored in sqlite3 database
+    - one user can have many tasks
 """
+############# Imports #####################
 
 # import our required libraries
+from flask_bcrypt import Bcrypt
+import sqlite3
 from flask import (
     Flask,
     render_template,
@@ -22,15 +32,87 @@ from flask import (
     url_for,
     escape,
     jsonify,
+    g
 )
+import sqlite3
+
 
 # create an instance of our Flask app
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 # set up session secret key
-app.secret_key = '_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = 'super secret key'
 session = {}
 
+
+############# Database #####################
+
+# Database setup:
+DATABASE = "./models/users.db"
+def get_db():
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+    return db
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+def init_db():
+    with app.app_context():
+        db = get_db()
+        with app.open_resource("./models/schema.sql", mode="r") as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+# init_db()   <----- run if the db has not been initialized yet
+
+# Database CRUD:
+
+
+def new_user(username, password):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        print('NEW USER FUNCTION')
+        cur.execute("INSERT INTO users (username, hash_password) VALUES (?, ?)", (username, password))
+        connection.commit()
+
+def insert_task(username, task):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        cur.execute("INSERT INTO tasks (username, task) VALUES (?, ?)", (username, task))
+        connection.commit()
+
+def get_all_tasks(username):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        cur.execute("SELECT task FROM tasks WHERE username=?", (username,))
+        return cur.fetchall()
+
+def get_user(username):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        cur.execute("SELECT * FROM users WHERE username=?", (username,))
+        return cur.fetchall()
+
+def check_password(username, passed_password):
+    with app.app_context():
+        connection = get_db()
+        cur = connection.cursor()
+        hashed_password = get_user(username)[0][2]
+        is_password = bcrypt.check_password_hash(hashed_password, passed_password)
+        return is_password
+
+
+
+
+############# Routes #####################
 
 ## create a route for our index page
 @app.route("/")
@@ -39,6 +121,7 @@ def index():
         return render_template("index.html", data=session["username"])
     else:
         return render_template("index.html")
+
 
 ## create a route for our login page
 @app.route("/login", methods=["GET", "POST"])
@@ -49,10 +132,12 @@ def login():
     # if the user is not logged in, grab the form data:
     if request.method == "POST":
         # if the username and password match, log the user in
-        if (
-            request.form["username"] == "admin"
-            and request.form["password"] == "password"
-        ):
+        username = request.form["username"]
+        password = request.form["password"]
+        #  check if the username is in the database
+        is_user = check_password(username, password)
+        # if the username and password match, log the user in
+        if is_user:
             session["username"] = request.form["username"]
             return redirect(url_for("index"))
         # if the username and password don't match, send the user back to the login page
@@ -61,6 +146,21 @@ def login():
     # if the user is not logged in, send them to the login page
     else:
         return render_template("login.html")
+
+
+## create a route for new user:
+@app.route("/newuser", methods=["POST"])
+def newuser():
+    # Save the username and password from the form
+    username = request.form["username"]
+    # Hash the password
+    pw_hash = Bcrypt().generate_password_hash(request.form["password"]).decode("utf-8")
+    # Save the username and hashed password to the database
+    new_user(username, pw_hash)
+    # Save the username to the session
+    session["username"] = username
+    # Redirect the user to the index page:
+    return redirect(url_for("index"))
 
 
 ## create a route for our logout page
