@@ -7,27 +7,9 @@ import dice
 """ Josh's RPG Game """
 
 # Our additions:
-# - Show map
-
-# bestiary = [{ 'name' : 'flying snake', 'health' : 10, 'damage' : '1d10' },
-#             { 'name' : 'giant mastiff','health' : 20, 'damage' : '1d4'  },
-#             { 'name' : 'baboon',       'health' : 45, 'damage' : '2d6'  },
-#             ]
-
-# armory = { 'staff' : { 'damage' : '1d4'  },
-#             'dagger': { 'damage' : '1d4'  }
-# }
-# spell_lookup = {'speak to animals' : { 'damage' : '0'  },
-#                 'mage hand'        : { 'damage' : '0'  },
-# }
-
-
-# # Start Game:
-# def startGame():
-#     # Set up player:
-#     player_health, inventory, spellbook = 15, armory, spell_lookup
-#     druid_name, mage_name
-
+# - Show map ----- updates on room discovery ( minus the secret basement in the kitchen )
+# - New cookie info
+# - give cookie to auto defeat enemies
 
 """Chad's Ongoing RPG Game"""
 
@@ -65,10 +47,17 @@ def combat():
 
         if move[0] == "use":  #
             if move[1] in inventory:  # checks if weapon is in your inventory
-                player_damage = dice.roll(armory[move[1]]["damage"])
-                print(
-                    f"You hit a {bestiary[monster_ID]['name']} for {player_damage} damage!"
-                )
+                # If we use the cookie we win automatically by giving the monster a heart
+                if move[1] == "cookie":
+                    print(
+                        f"You and the not so scary anymore {bestiary[monster_ID]['name']} sit on the ground to enjoy a lovely cookie. He's so happy he gives Chad a Yelp review on his baking prowess."
+                    )
+                    monster_health = 0
+                else:
+                    player_damage = dice.roll(armory[move[1]]["damage"])
+                    print(
+                        f"You hit a {bestiary[monster_ID]['name']} for {player_damage} damage!"
+                    )
             if move[1] not in inventory:
                 print(f"There is no {move[1]} in your inventory!")
 
@@ -114,7 +103,7 @@ def combat():
             pass
         if monster_health <= 0:
             print(
-                f"The {bestiary[monster_ID]['name']} lies dead. You are victorious!\n"
+                f"The {bestiary[monster_ID]['name']} lies dead. You are victorious!\n Well... unless u used a cookie...."
             )
             break
 
@@ -268,7 +257,7 @@ def draw_map():
         |_______________________|    |______________________|
         """
 
-    if rooms["HALL"]["viewed"] == True and rooms["DINING ROOM"] == True:
+    if rooms["HALL"]["viewed"] == True and rooms["DINING ROOM"]["viewed"] == True:
         layer2 = f"""
          _______________________      ______________________
         |                       |    |                      |
@@ -280,7 +269,7 @@ def draw_map():
         |                       |    |                      |
         |_______________________|    |______________________|
         """
-    elif rooms["HALL"]["viewed"] == True and rooms["DINING ROOM"] == False:
+    elif rooms["HALL"]["viewed"] == True and rooms["DINING ROOM"]["viewed"] == False:
         layer2 = f"""
          _______________________      ______________________
         |                       |    |                      |
@@ -292,7 +281,7 @@ def draw_map():
         |                       |    |                      |
         |_______________________|    |______________________|
         """
-    elif rooms["HALL"]["viewed"] == False and rooms["DINING ROOM"] == True:
+    elif rooms["HALL"]["viewed"] == False and rooms["DINING ROOM"]["viewed"] == True:
         layer2 = f"""
          _______________________      ______________________
         |                       |    |                      |
@@ -366,11 +355,7 @@ def draw_map():
         |_______________________|    |______________________|
         """
 
-        return f""" THE MAP:
-        {layer1}
-        {layer2}
-        {layer3}
-        """
+    return layer1 + layer2 + layer3 + "\n The map"
 
 
 currentRoom = "HALL"  # player start location
@@ -395,6 +380,7 @@ while True:  # MAIN INFINITE LOOP
         if move[1] in rooms[currentRoom]:
             currentRoom = rooms[currentRoom][move[1]]
             rooms[currentRoom]["viewed"] = True
+            print("current room viewed = " + rooms[currentRoom]["viewed"].__str__())
             if "desc" in rooms[currentRoom]:
                 print(rooms[currentRoom]["desc"])
             random_encounter()
